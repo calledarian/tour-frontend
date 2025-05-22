@@ -1,81 +1,230 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useCallback } from "react";
 import axios from "axios";
-import { useParams } from "react-router-dom";
-import '../styles/packageDetails.css'
+import { useParams, useNavigate } from "react-router-dom";
+import '../styles/packageDetails.css';
+import { MapPin } from "lucide-react";
 
 const apiUrl = process.env.REACT_APP_API_URL;
 
 export default function PackageDetails() {
     const { id } = useParams();
+    const navigate = useNavigate();
     const [pkg, setPkg] = useState(null);
     const [error, setError] = useState("");
     const [loading, setLoading] = useState(true);
+    const [selectedImageIndex, setSelectedImageIndex] = useState(0);
+
+    const parseHighlights = useCallback((highlights) => {
+        if (!highlights) return [];
+        if (Array.isArray(highlights)) return highlights;
+        if (typeof highlights === "string") {
+            try {
+                return JSON.parse(highlights);
+            } catch {
+                return highlights.split('\n').filter(Boolean);
+            }
+        }
+        return [];
+    }, []);
+
+    const fetchPackage = useCallback(async () => {
+        if (!id) {
+            setError("Invalid package ID");
+            setLoading(false);
+            return;
+        }
+
+        try {
+            setError("");
+            const res = await axios.get(`${apiUrl}/packages/${id}`, {
+                timeout: 10000, // 10 second timeout
+            });
+
+            const data = {
+                ...res.data,
+                highlights: parseHighlights(res.data.highlights)
+            };
+
+            setPkg(data);
+        } catch (err) {
+            if (err.code === 'ECONNABORTED') {
+                setError("Request timed out. Please try again.");
+            } else if (err.response?.status === 404) {
+                setError("Package not found.");
+            } else if (err.response?.status >= 500) {
+                setError("Server error. Please try again later.");
+            } else {
+                setError("Failed to load package details. Please check your connection.");
+            }
+        } finally {
+            setLoading(false);
+        }
+    }, [id, parseHighlights]);
 
     useEffect(() => {
-        const fetchPackage = async () => {
-            try {
-                const res = await axios.get(`${apiUrl}/packages/${id}`);
-                let data = res.data;
-
-                if (data.highlights && typeof data.highlights === "string") {
-                    try {
-                        data.highlights = JSON.parse(data.highlights);
-                    } catch {
-                        data.highlights = [];
-                    }
-                }
-                setPkg(data);
-            } catch (err) {
-                setError("Package not found or server error.");
-            } finally {
-                setLoading(false);
-            }
-        };
-
         fetchPackage();
-    }, [id]);
+    }, [fetchPackage]);
 
+    const handleRetry = () => {
+        setLoading(true);
+        fetchPackage();
+    };
 
-    if (loading) return <div className="package-loading">Loading...</div>;
-    if (error) return <div className="package-error">{error}</div>;
+    const handleImageClick = (index) => {
+        setSelectedImageIndex(index);
+    };
+
+    const formatPrice = (price) => {
+        return new Intl.NumberFormat('en-US', {
+            style: 'currency',
+            currency: 'USD'
+        }).format(price);
+    };
+
+    if (loading) {
+        return (
+            <div className="package-loading">
+                <div className="loading-spinner"></div>
+                <p>Loading package details...</p>
+            </div>
+        );
+    }
+
+    if (error) {
+        return (
+            <div className="package-error">
+                <h2>Oops! Something went wrong</h2>
+                <p>{error}</p>
+                <div className="error-actions">
+                    <button onClick={handleRetry} className="retry-btn">
+                        Try Again
+                    </button>
+                    <button onClick={() => navigate(-1)} className="back-btn">
+                        Go Back
+                    </button>
+                </div>
+            </div>
+        );
+    }
+
+    if (!pkg) {
+        return (
+            <div className="package-error">
+                <p>No package data available</p>
+                <button onClick={() => navigate(-1)} className="back-btn">
+                    Go Back
+                </button>
+            </div>
+        );
+    }
 
     return (
         <div className="package-container">
-            <h1 className="package-title">{pkg.title}</h1>
+            <button
+                onClick={() => navigate(-1)}
+                className="back-button"
+                aria-label="Go back"
+            >
+                ← Back
+            </button>
+
+            <header className="package-header">
+                <h1 className="package-title">{pkg.title}</h1>
+                {pkg.location && (
+                    <p className="package-location"><MapPin /> {pkg.location}</p>
+                )}
+            </header>
 
             {pkg.images?.length > 0 && (
-                <div className="package-gallery">
-                    {pkg.images.map((url, index) => (
+                <section className="package-gallery">
+                    <div className="main-image-container">
                         <img
-                            key={index}
-                            src={url}
-                            alt={`${pkg.title} - ${index + 1}`}
-                            className="package-image"
+                            src={pkg.images[selectedImageIndex]}
+                            alt={`${pkg.title} - Main view`}
+                            className="main-package-image"
+                            loading="lazy"
                         />
-                    ))}
-                </div>
+                    </div>
+
+                    {pkg.images.length > 1 && (
+                        <div className="image-thumbnails">
+                            {pkg.images.map((url, index) => (
+                                <button
+                                    key={index}
+                                    onClick={() => handleImageClick(index)}
+                                    className={`thumbnail ${index === selectedImageIndex ? 'active' : ''}`}
+                                    aria-label={`View image ${index + 1}`}
+                                >
+                                    <img
+                                        src={url}
+                                        alt={`${pkg.title} - Thumbnail ${index + 1}`}
+                                        loading="lazy"
+                                    />
+                                </button>
+                            ))}
+                        </div>
+                    )}
+                </section>
             )}
 
-            <div className="package-info">
-                <p><strong>Location:</strong> {pkg.location}</p>
-                <p><strong>Price:</strong> ${pkg.price}</p>
-                <p><strong>Duration:</strong> {pkg.duration}</p>
+            <div className="package-content">
+                <div className="package-info-grid">
+                    {pkg.price && (
+                        <div className="info-card price-card">
+                            <h3>Price</h3>
+                            <p className="price">{formatPrice(pkg.price)}</p>
+                        </div>
+                    )}
+
+                    {pkg.duration && (
+                        <div className="info-card">
+                            <h3>Duration</h3>
+                            <p>{pkg.duration}</p>
+                        </div>
+                    )}
+                </div>
+
+                {pkg.description && (
+                    <section className="package-description">
+                        <h2>About This Package</h2>
+                        <p>{pkg.description}</p>
+                    </section>
+                )}
+
+                {pkg.highlights?.length > 0 && (
+                    <section className="package-highlights">
+                        <h2>Daily Highlights</h2>
+                        <div className="highlights-list">
+                            {pkg.highlights.map((highlight, idx) => (
+                                <div key={idx} className="highlight-item">
+                                    <span className="day-number">Day {idx + 1}</span>
+                                    <p>{highlight}</p>
+                                </div>
+                            ))}
+                        </div>
+                    </section>
+                )}
+
+                {pkg.costIncludes && (
+                    <section className="package-includes">
+                        <h2>What's Included</h2>
+                        <div className="includes-content">
+                            {pkg.costIncludes.split('\n').map((item, idx) => (
+                                <p key={idx}>{item}</p>
+                            ))}
+                        </div>
+                    </section>
+                )}
             </div>
 
-            <p className="package-description">{pkg.description}</p>
-
-            {pkg.highlights?.length > 0 && (
-                <div className="package-highlights">
-                    <h3>Daily Highlights</h3>
-                    <ul>
-                        {pkg.highlights.map((highlight, idx) => (
-                            <li key={idx}>
-                                <strong>Day {idx + 1}:</strong> {highlight}
-                            </li>
-                        ))}
-                    </ul>
-                </div>
-            )}
+            <div className="package-actions">
+                <button className="book-now-btn">
+                    Book Now
+                </button>
+                <button className="contact-btn">
+                    Contact Us
+                </button>
+            </div>
         </div>
     );
 }

@@ -16,6 +16,11 @@ export default function NavBar() {
                     <Link to="/">RambodaTours</Link>
                 </div>
 
+                {/* Phone number placed here */}
+                <div className="nav-phone">
+                    <a href="tel:+94712345678" className="nav-link">+94 712 345 678</a>
+                </div>
+
                 <div className="menu-toggle" onClick={toggleMenu}>
                     <div className={`hamburger ${isMenuOpen ? 'active' : ''}`}>
                         <span></span>
@@ -38,12 +43,7 @@ export default function NavBar() {
                         <Link to="/dashboard" className="nav-link">Dashboard</Link>
                     </li>
                 </ul>
-                <ul className="nav-menu">
-                    <li className="nav-item">
-                        <a href="tel:+94712345678" className="nav-link" >+94 712 345 678</a>
-                    </li>
-                </ul>
             </div>
-        </nav >
+        </nav>
     );
 }

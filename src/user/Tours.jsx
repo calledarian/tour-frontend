@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
+import { MapPin } from "lucide-react";
 
 const apiUrl = process.env.REACT_APP_API_URL;
 
@@ -108,7 +109,7 @@ export default function Tours() {
                                     <div style={styles.packageContent}>
                                         <h3 style={styles.packageTitle}>{pkg.title}</h3>
                                         <p style={styles.packageLocation}>
-                                            Location: {pkg.location}
+                                            <MapPin /> {pkg.location}
                                         </p>
                                         <div style={styles.packageFooter}>
                                             <div style={styles.priceContainer}>
