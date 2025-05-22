@@ -4,20 +4,24 @@ import Dashboard from './admin/dashboard';
 import PackageDetails from './user/packageDetails';
 import Login from './admin/login';
 import PrivateRoute from './admin/privateRoute';
+import Footer from './layout/Footer';
+import Home from './user/Home';
 
 function App() {
   return (
     <Router>
       <NavBar />
       <Routes>
+        <Route path='/' element={<Home />} />
+        <Route path="/tours/:id" element={<PackageDetails />} />
         <Route path='/login' element={<Login />} />
         <Route path="/dashboard" element={
           <PrivateRoute>
             <Dashboard />
           </PrivateRoute>
         } />
-        <Route path="/packages/:title" element={<PackageDetails />} />
       </Routes>
+      <Footer />
     </Router>
   );
 }

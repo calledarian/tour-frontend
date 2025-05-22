@@ -1,11 +1,13 @@
 import { useParams } from "react-router-dom";
-import { useEffect, useState } from "react";
+import { useState, useEffect } from "react";
 import axios from "axios";
+import "../styles/packageDetails.css";
+
 
 const apiUrl = process.env.REACT_APP_API_URL;
 
-export default function PackageDetail() {
-    const { title } = useParams();
+export default function PackageDetails() {
+    const { id } = useParams();
     const [pkg, setPkg] = useState(null);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
@@ -13,34 +15,30 @@ export default function PackageDetail() {
     useEffect(() => {
         async function fetchPackage() {
             try {
-                const decodedTitle = decodeURIComponent(title);
-                // Adjust this to your API: 
-                // Example assumes GET /packages?title=xyz returns array
-                const response = await axios.get(`${apiUrl}/packages?title=${encodeURIComponent(decodedTitle)}`);
-                if (response.data.length > 0) {
-                    setPkg(response.data[0]);
-                } else {
-                    setError("Package not found");
-                }
-            } catch {
-                setError("Failed to fetch package details.");
+                const response = await axios.get(`${apiUrl}/packages/${id}`);
+                setPkg(response.data);
+            } catch (err) {
+                console.error(err);
+                setError("Package not found or failed to load.");
             } finally {
                 setLoading(false);
             }
         }
-        fetchPackage();
-    }, [title]);
 
-    if (loading) return <p>Loading package details...</p>;
-    if (error) return <p>{error}</p>;
+        fetchPackage();
+    }, [id]);
+
+    if (loading) return <p className="package-loading">Loading package details...</p>;
+    if (error) return <p className="package-error">{error}</p>;
     if (!pkg) return null;
 
     return (
-        <div style={{ padding: 20 }}>
-            <h2>{pkg.title}</h2>
-            <p><strong>Location:</strong> {pkg.location}</p>
-            <p><strong>Price:</strong> ${pkg.price}</p>
-            <p><strong>Duration:</strong> {pkg.duration}</p>
+        <div className="package-container">
+            <h1 className="package-title">{pkg.title}</h1>
+            <p className="package-info"><strong>Location:</strong> {pkg.location}</p>
+            <p className="package-info"><strong>Price:</strong> ${pkg.price}</p>
+            <p className="package-info"><strong>Duration:</strong> {pkg.duration || "N/A"}</p>
+            <p className="package-description">{pkg.description || "No description provided."}</p>
         </div>
     );
 }
