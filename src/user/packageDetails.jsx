@@ -17,7 +17,6 @@ export default function PackageDetails() {
                 const res = await axios.get(`${apiUrl}/packages/${id}`);
                 let data = res.data;
 
-                // Parse highlights if it's a string (JSON)
                 if (data.highlights && typeof data.highlights === "string") {
                     try {
                         data.highlights = JSON.parse(data.highlights);
@@ -25,7 +24,6 @@ export default function PackageDetails() {
                         data.highlights = [];
                     }
                 }
-
                 setPkg(data);
             } catch (err) {
                 setError("Package not found or server error.");

@@ -7,6 +7,7 @@ export const PackageEditForm = ({ pkg, onSave, onCancel }) => {
         price: pkg.price,
         duration: pkg.duration,
         description: pkg.description,
+        costIncludes: pkg.costIncludes,
     });
 
     const handleEditChange = (e) => {
@@ -67,6 +68,13 @@ export const PackageEditForm = ({ pkg, onSave, onCancel }) => {
                 onChange={handleEditChange}
                 className="form-input"
                 placeholder="Description"
+            />
+            <input
+                name="cost includes;"
+                value={editFormData.costIncludes || ""}
+                onChange={handleEditChange}
+                className="form-input"
+                placeholder="Cost Includes"
             />
 
             <button

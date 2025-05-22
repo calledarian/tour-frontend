@@ -12,10 +12,12 @@ export const CreatePackageForm = ({ onPackageCreated, getAuthHeaders }) => {
         price: "",
         duration: "1 day",
         description: "",
+        costIncludes: "",
     });
     const [message, setMessage] = useState("");
     const [selectedImages, setSelectedImages] = useState([]);
     const [highlights, setHighlights] = useState([]);
+    const [loading, setLoading] = useState(false);
 
 
     const handleChange = (e) => {
@@ -37,6 +39,7 @@ export const CreatePackageForm = ({ onPackageCreated, getAuthHeaders }) => {
 
     const handleSubmit = async (e) => {
         e.preventDefault();
+        setLoading(true);
 
         try {
             const formPayload = new FormData();
@@ -45,7 +48,9 @@ export const CreatePackageForm = ({ onPackageCreated, getAuthHeaders }) => {
             formPayload.append("price", formData.price);
             formPayload.append("duration", formData.duration);
             formPayload.append("description", formData.description);
+            formPayload.append("costIncludes", formData.costIncludes);
             formPayload.append("highlights", JSON.stringify(highlights));
+
 
             for (let i = 0; i < selectedImages.length; i++) {
                 formPayload.append("images", selectedImages[i]);
@@ -60,12 +65,15 @@ export const CreatePackageForm = ({ onPackageCreated, getAuthHeaders }) => {
             });
 
             setMessage("Package created successfully!");
-            setFormData({ title: "", location: "", price: "", duration: "1 day", description: "" });
+            setLoading(false);
+            setFormData({ title: "", location: "", price: "", duration: "1 day", description: "", costIncludes: "" });
             setSelectedImages([]);
             setHighlights([]);
             onPackageCreated(response.data);
         } catch {
+
             setMessage("Failed to create package.");
+            setLoading(false);
         }
     };
 
@@ -132,8 +140,11 @@ export const CreatePackageForm = ({ onPackageCreated, getAuthHeaders }) => {
                         value={formData.price}
                         onChange={handleChange}
                         required
+                        min="0"
+                        step="any"
                         className="form-input"
                     />
+
                 </div>
 
                 <DurationSelector
@@ -171,8 +182,23 @@ export const CreatePackageForm = ({ onPackageCreated, getAuthHeaders }) => {
                     />
                 </div>
 
-                <button type="submit" className="submit-button">
-                    Create Package
+                <div className="form-group">
+                    <label htmlFor="costIncludes" className="form-label">Cost Includes:</label>
+                    <input
+                        type="text"
+                        id="costIncludes"
+                        name="costIncludes"
+                        value={formData.costIncludes}
+                        onChange={handleChange}
+                        required
+                        className="form-input"
+                    />
+                </div>
+
+
+
+                <button type="submit" className="submit-button" disabled={loading}>
+                    {loading ? "Creating..." : "Create Package"}
                 </button>
             </form>
             {message && <p className="form-message">{message}</p>}
