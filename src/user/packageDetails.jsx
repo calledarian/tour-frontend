@@ -3,7 +3,6 @@ import { useState, useEffect } from "react";
 import axios from "axios";
 import "../styles/packageDetails.css";
 
-
 const apiUrl = process.env.REACT_APP_API_URL;
 
 export default function PackageDetails() {
@@ -13,17 +12,17 @@ export default function PackageDetails() {
     const [error, setError] = useState(null);
 
     useEffect(() => {
-        async function fetchPackage() {
+        const fetchPackage = async () => {
             try {
                 const response = await axios.get(`${apiUrl}/packages/${id}`);
                 setPkg(response.data);
             } catch (err) {
-                console.error(err);
+                console.error("Error fetching package:", err);
                 setError("Package not found or failed to load.");
             } finally {
                 setLoading(false);
             }
-        }
+        };
 
         fetchPackage();
     }, [id]);
@@ -35,10 +34,29 @@ export default function PackageDetails() {
     return (
         <div className="package-container">
             <h1 className="package-title">{pkg.title}</h1>
-            <p className="package-info"><strong>Location:</strong> {pkg.location}</p>
-            <p className="package-info"><strong>Price:</strong> ${pkg.price}</p>
-            <p className="package-info"><strong>Duration:</strong> {pkg.duration || "N/A"}</p>
-            <p className="package-description">{pkg.description || "No description provided."}</p>
+
+            {pkg.images?.length > 0 && (
+                <div className="package-gallery">
+                    {pkg.images.map((url, index) => (
+                        <img
+                            key={index}
+                            src={url}
+                            alt={`${pkg.title} - ${index + 1}`}
+                            className="package-image"
+                        />
+                    ))}
+                </div>
+            )}
+
+            <div className="package-info">
+                <p><strong>Location:</strong> {pkg.location}</p>
+                <p><strong>Price:</strong> ${pkg.price}</p>
+                <p><strong>Duration:</strong> {pkg.duration}</p>
+            </div>
+
+            <p className="package-description">
+                {pkg.description}
+            </p>
         </div>
     );
 }

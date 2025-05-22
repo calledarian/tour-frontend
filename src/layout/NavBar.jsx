@@ -38,7 +38,12 @@ export default function NavBar() {
                         <Link to="/dashboard" className="nav-link">Dashboard</Link>
                     </li>
                 </ul>
+                <ul className="nav-menu">
+                    <li className="nav-item">
+                        <a href="tel:+94712345678" className="nav-link" >+94 712 345 678</a>
+                    </li>
+                </ul>
             </div>
-        </nav>
+        </nav >
     );
 }
