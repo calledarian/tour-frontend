@@ -15,9 +15,19 @@ export const CreatePackageForm = ({ onPackageCreated, getAuthHeaders }) => {
     });
     const [message, setMessage] = useState("");
     const [selectedImages, setSelectedImages] = useState([]);
+    const [highlights, setHighlights] = useState([]);
+
 
     const handleChange = (e) => {
         const { name, value } = e.target;
+
+        if (name === "duration") {
+            const days = parseInt(value) || 0;
+            setHighlights((prev) =>
+                Array.from({ length: days }, (_, i) => prev[i] || "")
+            );
+        }
+
         setFormData((prev) => ({ ...prev, [name]: value }));
     };
 
@@ -35,6 +45,7 @@ export const CreatePackageForm = ({ onPackageCreated, getAuthHeaders }) => {
             formPayload.append("price", formData.price);
             formPayload.append("duration", formData.duration);
             formPayload.append("description", formData.description);
+            formPayload.append("highlights", JSON.stringify(highlights));
 
             for (let i = 0; i < selectedImages.length; i++) {
                 formPayload.append("images", selectedImages[i]);
@@ -51,6 +62,7 @@ export const CreatePackageForm = ({ onPackageCreated, getAuthHeaders }) => {
             setMessage("Package created successfully!");
             setFormData({ title: "", location: "", price: "", duration: "1 day", description: "" });
             setSelectedImages([]);
+            setHighlights([]);
             onPackageCreated(response.data);
         } catch {
             setMessage("Failed to create package.");
@@ -128,6 +140,23 @@ export const CreatePackageForm = ({ onPackageCreated, getAuthHeaders }) => {
                     value={formData.duration}
                     onChange={handleChange}
                 />
+
+                {highlights.map((highlight, index) => (
+                    <div key={index} className="form-group">
+                        <label className="form-label">Day {index + 1} Highlights:</label>
+                        <textarea
+                            className="form-input"
+                            placeholder={`Describe what happens on Day ${index + 1}`}
+                            value={highlight}
+                            onChange={(e) => {
+                                const updated = [...highlights];
+                                updated[index] = e.target.value;
+                                setHighlights(updated);
+                            }}
+                        />
+                    </div>
+                ))}
+
 
                 <div className="form-group">
                     <label htmlFor="description" className="form-label">Description:</label>

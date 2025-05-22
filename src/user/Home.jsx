@@ -1,4 +1,4 @@
-import PackageDetails from "./packageDetails";
+
 import "../styles/home.css";
 
 export default function Home() {
@@ -7,10 +7,7 @@ export default function Home() {
         <div className="home-container">
             <h1>Welcome to Tour Explorer</h1>
             <p>Discover amazing travel packages and plan your next adventure with us!</p>
-            <div className="featured-packages">
-                <h2>Featured Packages</h2>
-                <PackageDetails />
-            </div>
+
             <div className="why-choose-us">
                 <h2>Why Choose Us?</h2>
                 <ul>

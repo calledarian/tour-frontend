@@ -10,15 +10,18 @@ export const DurationSelector = ({ value, onChange }) => {
                 required
                 className="form-input"
             >
+                <option value="">Select Days</option>
                 {[...Array(10)].map((_, i) => {
                     const day = i + 1;
                     return (
-                        <option key={day} value={`${day} day${day > 1 ? "s" : ""}`}>
+                        <option key={day} value={day}>
                             {day} day{day > 1 ? "s" : ""}
                         </option>
                     );
                 })}
             </select>
         </div>
+
+
     );
 };

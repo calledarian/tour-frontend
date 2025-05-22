@@ -1,24 +1,34 @@
-import { useParams } from "react-router-dom";
-import { useState, useEffect } from "react";
+import { useEffect, useState } from "react";
 import axios from "axios";
-import "../styles/packageDetails.css";
+import { useParams } from "react-router-dom";
+import '../styles/packageDetails.css'
 
 const apiUrl = process.env.REACT_APP_API_URL;
 
 export default function PackageDetails() {
     const { id } = useParams();
     const [pkg, setPkg] = useState(null);
+    const [error, setError] = useState("");
     const [loading, setLoading] = useState(true);
-    const [error, setError] = useState(null);
 
     useEffect(() => {
         const fetchPackage = async () => {
             try {
-                const response = await axios.get(`${apiUrl}/packages/${id}`);
-                setPkg(response.data);
+                const res = await axios.get(`${apiUrl}/packages/${id}`);
+                let data = res.data;
+
+                // Parse highlights if it's a string (JSON)
+                if (data.highlights && typeof data.highlights === "string") {
+                    try {
+                        data.highlights = JSON.parse(data.highlights);
+                    } catch {
+                        data.highlights = [];
+                    }
+                }
+
+                setPkg(data);
             } catch (err) {
-                console.error("Error fetching package:", err);
-                setError("Package not found or failed to load.");
+                setError("Package not found or server error.");
             } finally {
                 setLoading(false);
             }
@@ -27,9 +37,9 @@ export default function PackageDetails() {
         fetchPackage();
     }, [id]);
 
-    if (loading) return <p className="package-loading">Loading package details...</p>;
-    if (error) return <p className="package-error">{error}</p>;
-    if (!pkg) return null;
+
+    if (loading) return <div className="package-loading">Loading...</div>;
+    if (error) return <div className="package-error">{error}</div>;
 
     return (
         <div className="package-container">
@@ -54,9 +64,20 @@ export default function PackageDetails() {
                 <p><strong>Duration:</strong> {pkg.duration}</p>
             </div>
 
-            <p className="package-description">
-                {pkg.description}
-            </p>
+            <p className="package-description">{pkg.description}</p>
+
+            {pkg.highlights?.length > 0 && (
+                <div className="package-highlights">
+                    <h3>Daily Highlights</h3>
+                    <ul>
+                        {pkg.highlights.map((highlight, idx) => (
+                            <li key={idx}>
+                                <strong>Day {idx + 1}:</strong> {highlight}
+                            </li>
+                        ))}
+                    </ul>
+                </div>
+            )}
         </div>
     );
 }
