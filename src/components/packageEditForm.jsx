@@ -46,35 +46,12 @@ export const PackageEditForm = ({ pkg, onSave, onCancel }) => {
                 placeholder="Price"
                 required
             />
-            <select
-                name="duration"
-                value={editFormData.duration || "1 day"}
-                onChange={handleEditChange}
-                className="form-input"
-                required
-            >
-                {[...Array(10)].map((_, i) => {
-                    const day = i + 1;
-                    return (
-                        <option key={day} value={`${day} day${day > 1 ? "s" : ""}`}>
-                            {day} day{day > 1 ? "s" : ""}
-                        </option>
-                    );
-                })}
-            </select>
             <input
                 name="description"
                 value={editFormData.description || ""}
                 onChange={handleEditChange}
                 className="form-input"
                 placeholder="Description"
-            />
-            <input
-                name="cost includes;"
-                value={editFormData.costIncludes || ""}
-                onChange={handleEditChange}
-                className="form-input"
-                placeholder="Cost Includes"
             />
 
             <button
