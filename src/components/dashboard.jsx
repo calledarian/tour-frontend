@@ -3,6 +3,7 @@ import { usePackages } from "../hooks/usePackages";
 import '../styles/dashboard.css';
 import { CreatePackageForm } from "./createPackageForm";
 import { PackagesList } from "./packageList";
+import AdminBookings from "./bookingsManage";
 
 export default function Dashboard() {
     const { packages, loading, error, deletePackage, updatePackage, addPackage, getAuthHeaders } = usePackages();
@@ -62,6 +63,8 @@ export default function Dashboard() {
                 onSaveEdit={handleSaveEdit}
                 onCancelEdit={handleCancelEdit}
             />
+
+            <AdminBookings />
         </div>
     );
 }

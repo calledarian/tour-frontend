@@ -24,6 +24,9 @@ export const PackageListItem = ({ pkg, editId, onEdit, onDelete, onSaveEdit, onC
                     )}
                 </div>
                 <div className="tour-packages-content">
+                    <p className="tour-packages-item-id" style={{ fontSize: "0.85em", color: "#888" }}>
+                        Tour Id: {pkg.id}
+                    </p>
                     <h3 className="tour-packages-item-title">{pkg.title}</h3>
                     <p className="tour-packages-item-text">Location: {pkg.location}</p>
                     <p className="tour-packages-item-text">Price: ${pkg.price}</p>

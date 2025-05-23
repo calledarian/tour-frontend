@@ -3,6 +3,7 @@ import axios from "axios";
 import { useParams, useNavigate } from "react-router-dom";
 import '../styles/packageDetails.css';
 import { MapPin } from "lucide-react";
+import BookingForm from "./bookingForm";
 
 const apiUrl = process.env.REACT_APP_API_URL;
 
@@ -218,13 +219,11 @@ export default function PackageDetails() {
             </div>
 
             <div className="package-actions">
-                <button className="book-now-btn">
-                    Book Now
-                </button>
                 <button className="contact-btn">
                     Contact Us
                 </button>
             </div>
+            <BookingForm />
         </div>
     );
 }

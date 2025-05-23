@@ -40,7 +40,7 @@ export default function NavBar() {
                         <Link to="/contact" className="nav-link">Contact</Link>
                     </li>
                     <li className="nav-item">
-                        <Link to="/dashboard" className="nav-link">Dashboard</Link>
+                        <Link to="/login" className="nav-link">Login</Link>
                     </li>
                 </ul>
             </div>
