@@ -164,7 +164,7 @@ export default function BookingForm() {
                         onChange={handleInputChange}
                         required
                     >
-                        {[1, 2, 3, 4, 5, 6, 7, 8, 9, 10].map(num => (
+                        {[1, 2, 3, 4].map(num => (
                             <option key={num} value={num}>
                                 {num} {num === 1 ? 'Person' : 'People'} - ${Math.round(price * num * (num === 1 ? 1 : num === 2 ? 0.9 : 0.85))}
                             </option>
@@ -180,9 +180,13 @@ export default function BookingForm() {
                         name="phone"
                         value={formData.phone}
                         onChange={handleInputChange}
-                        placeholder="+91 9876543210"
+                        placeholder="Phone Number"
                         required
                     />
+                    <small>
+                        Please include your country code. <br />
+                        <strong>Americans: add +1 before your number</strong>
+                    </small>
                 </div>
 
                 <div className="input-group">

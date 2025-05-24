@@ -37,9 +37,6 @@ export default function NavBar() {
                         <Link to="/tours" className="nav-link">Tours</Link>
                     </li>
                     <li className="nav-item">
-                        <Link to="/contact" className="nav-link">Contact</Link>
-                    </li>
-                    <li className="nav-item">
                         <Link to="/login" className="nav-link">Login</Link>
                     </li>
                 </ul>

@@ -13,7 +13,6 @@ export default function Home() {
                     </p>
                     <div className="hero-actions">
                         <Link className="cta-primary" to="/tours">Browse Tours</Link>
-                        <Link className="cta-secondary" to="/contact">Contact Us</Link>
                     </div>
                 </div>
             </header>
