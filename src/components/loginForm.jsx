@@ -8,16 +8,25 @@ const apiUrl = process.env.REACT_APP_API_URL;
 const Login = () => {
     const [username, setUsername] = useState('');
     const [password, setPassword] = useState('');
+    const [extraField, setExtraField] = useState(''); // honeypot
     const [error, setError] = useState('');
     const [showContact, setShowContact] = useState(false);
 
     const handleLogin = async (e) => {
         e.preventDefault();
         setError('');
+
+        if (extraField) {
+            // Honeypot field filled => possible bot
+            setError('Bot detected.');
+            return;
+        }
+
         try {
             const response = await axios.post(`${apiUrl}/auth/login`, {
                 username,
                 password,
+                extra_field: extraField, // send honeypot value for backend check
             });
 
             const token = response.data.access_token;
@@ -45,6 +54,7 @@ const Login = () => {
                     onChange={(e) => setUsername(e.target.value)}
                     required
                     className="login-input"
+                    autoComplete="username"
                 />
                 <input
                     type="password"
@@ -53,7 +63,19 @@ const Login = () => {
                     onChange={(e) => setPassword(e.target.value)}
                     required
                     className="login-input"
+                    autoComplete="current-password"
                 />
+                {/* Honeypot field, hidden from users */}
+                <input
+                    type="text"
+                    name="extra_field"
+                    value={extraField}
+                    onChange={(e) => setExtraField(e.target.value)}
+                    style={{ display: 'none' }}
+                    tabIndex={-1} // prevent tab focus
+                    autoComplete="off"
+                />
+
                 <button type="submit" className="login-button">
                     <LogIn size={16} /> Login
                 </button>
@@ -61,9 +83,7 @@ const Login = () => {
 
             <div className="forgot-text">
                 {!showContact ? (
-                    <span onClick={() => setShowContact(true)}>
-                        Forgot your password?
-                    </span>
+                    <span onClick={() => setShowContact(true)}>Forgot your password?</span>
                 ) : (
                     <>
                         <span onClick={() => setShowContact(false)}>Contact your developer:</span>
@@ -82,7 +102,9 @@ const Login = () => {
             {error && (
                 <div className="login-error">
                     <AlertCircle size={16} />
-                    <span><strong>Error:</strong> {error}</span>
+                    <span>
+                        <strong>Error:</strong> {error}
+                    </span>
                 </div>
             )}
         </div>

@@ -22,6 +22,7 @@ export default function BookingForm() {
         phone: "",
         tourDate: '',
         notes: "",
+        extra_field: "",
     });
 
     // Get tour price
@@ -65,6 +66,12 @@ export default function BookingForm() {
         setSubmitting(true);
         setError("");
 
+        if (formData.extra_field) {
+            setError("Bot detected. Submission rejected.");
+            setSubmitting(false);
+            return;
+        }
+
         try {
             const bookingData = {
                 ...formData,
@@ -74,7 +81,6 @@ export default function BookingForm() {
             await axios.post(`${apiUrl}/bookings`, bookingData);
             setSuccess(true);
 
-            // Reset form
             setFormData({
                 tourId: Number(id),
                 name: "",
@@ -83,6 +89,7 @@ export default function BookingForm() {
                 phone: "",
                 tourDate: "",
                 notes: "",
+                extra_field: "",
             });
         } catch (err) {
             setError("Booking failed. Please try again or call us directly.");
@@ -90,6 +97,7 @@ export default function BookingForm() {
             setSubmitting(false);
         }
     };
+
 
     if (loading) {
         return <div className="loading">Loading...</div>;
@@ -192,8 +200,15 @@ export default function BookingForm() {
                         Please choose a date <br />
                     </small>
                 </div>
-
-
+                <input
+                    type="text"
+                    name="extra_field"
+                    value={formData.extra_field || ""}
+                    onChange={handleInputChange}
+                    style={{ display: 'none' }}
+                    tabIndex={-1}
+                    autoComplete="off"
+                />
                 <div className="input-group">
                     <label>Special Requests (Optional)</label>
                     <textarea
@@ -203,7 +218,11 @@ export default function BookingForm() {
                         placeholder="Any special requests, food preferences, etc."
                         rows="3"
                     />
+
                 </div>
+
+
+
 
                 {error && <div className="error-message">{error}</div>}
 
