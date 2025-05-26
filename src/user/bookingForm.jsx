@@ -1,4 +1,4 @@
-import { useParams } from "react-router-dom";
+import { Link, useParams } from "react-router-dom";
 import { useState, useEffect } from "react";
 import "../styles/bookingForm.css";
 import axios from "axios";
@@ -15,11 +15,12 @@ export default function BookingForm() {
     const [submitting, setSubmitting] = useState(false);
 
     const [formData, setFormData] = useState({
-        tourId: Number(id) || 0,
+        tourId: Number(id),
         name: "",
         email: "",
         people: 1,
         phone: "",
+        tourDate: '',
         notes: "",
     });
 
@@ -80,6 +81,7 @@ export default function BookingForm() {
                 email: "",
                 people: 1,
                 phone: "",
+                tourDate: "",
                 notes: "",
             });
         } catch (err) {
@@ -107,7 +109,9 @@ export default function BookingForm() {
             <div className="success-box">
                 <h2>✅ Booking Sent!</h2>
                 <p>We received your booking request. We'll call you within 24 hours to confirm.</p>
-                <button onClick={() => setSuccess(false)}>Book Another Tour</button>
+                <Link to="/tours" className="back-link">
+                    Back to Tours
+                </Link>
             </div>
         );
     }
@@ -173,6 +177,22 @@ export default function BookingForm() {
                         <strong>Americans: add +1 before your number</strong>
                     </small>
                 </div>
+
+                <div className="input-group">
+                    <label>Date:</label>
+                    <input
+                        type="date"
+                        name="tourDate"
+                        value={formData.tourDate}
+                        onChange={handleInputChange}
+                        required
+                        min={new Date().toISOString().split('T')[0]}
+                    />
+                    <small>
+                        Please choose a date <br />
+                    </small>
+                </div>
+
 
                 <div className="input-group">
                     <label>Special Requests (Optional)</label>

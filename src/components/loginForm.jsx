@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import axios from 'axios';
+import { LogIn, AlertCircle } from 'lucide-react';
 import '../styles/login.css';
 
 const apiUrl = process.env.REACT_APP_API_URL;
@@ -9,7 +10,6 @@ const Login = () => {
     const [password, setPassword] = useState('');
     const [error, setError] = useState('');
     const [showContact, setShowContact] = useState(false);
-
 
     const handleLogin = async (e) => {
         e.preventDefault();
@@ -36,7 +36,7 @@ const Login = () => {
 
     return (
         <div className="login-container">
-            <h2 className="login-title">Login</h2>
+            <h2 className="login-title">Admin Login</h2>
             <form onSubmit={handleLogin} className="login-form">
                 <input
                     type="text"
@@ -55,7 +55,7 @@ const Login = () => {
                     className="login-input"
                 />
                 <button type="submit" className="login-button">
-                    Login
+                    <LogIn size={16} /> Login
                 </button>
             </form>
 
@@ -66,13 +66,12 @@ const Login = () => {
                     </span>
                 ) : (
                     <>
-                        <span onClick={() => setShowContact(false)}>Contact your developer: </span>
+                        <span onClick={() => setShowContact(false)}>Contact your developer:</span>
                         <a
                             href="https://ariankhadem.vercel.app"
                             target="_blank"
                             rel="noopener noreferrer"
-                            style={{ color: 'green', textDecoration: 'underline' }
-                            }
+                            className="contact-link"
                         >
                             Arian Khadem
                         </a>
@@ -80,9 +79,13 @@ const Login = () => {
                 )}
             </div>
 
-
-            {error && <div className="login-error"><strong>Error:</strong> {error}</div>}
-        </div >
+            {error && (
+                <div className="login-error">
+                    <AlertCircle size={16} />
+                    <span><strong>Error:</strong> {error}</span>
+                </div>
+            )}
+        </div>
     );
 };
 

@@ -2,6 +2,8 @@ import { useState, useEffect } from "react";
 import axios from "axios";
 import { ImagePreview } from "./imagePreview";
 import { DurationSelector } from "./durationSelector";
+import { ImagePlus, MapPin, DollarSign, FileText, CheckCircle, Loader2 } from "lucide-react";
+import '../styles/createPackageForm.css'
 
 const apiUrl = process.env.REACT_APP_API_URL;
 
@@ -18,7 +20,6 @@ export const CreatePackageForm = ({ onPackageCreated, getAuthHeaders }) => {
     const [selectedImages, setSelectedImages] = useState([]);
     const [highlights, setHighlights] = useState([]);
     const [loading, setLoading] = useState(false);
-
 
     const handleChange = (e) => {
         const { name, value } = e.target;
@@ -43,15 +44,10 @@ export const CreatePackageForm = ({ onPackageCreated, getAuthHeaders }) => {
 
         try {
             const formPayload = new FormData();
-            formPayload.append("title", formData.title);
-            formPayload.append("location", formData.location);
-            formPayload.append("price", formData.price);
-            formPayload.append("duration", formData.duration);
-            formPayload.append("description", formData.description);
-            formPayload.append("costIncludes", formData.costIncludes);
+            for (let key in formData) {
+                formPayload.append(key, formData[key]);
+            }
             formPayload.append("highlights", JSON.stringify(highlights));
-
-
             for (let i = 0; i < selectedImages.length; i++) {
                 formPayload.append("images", selectedImages[i]);
             }
@@ -71,7 +67,6 @@ export const CreatePackageForm = ({ onPackageCreated, getAuthHeaders }) => {
             setHighlights([]);
             onPackageCreated(response.data);
         } catch {
-
             setMessage("Failed to create package.");
             setLoading(false);
         }
@@ -85,12 +80,12 @@ export const CreatePackageForm = ({ onPackageCreated, getAuthHeaders }) => {
     }, [message]);
 
     return (
-        <div>
-            <h2 className="create-package-title">Create Package</h2>
-            <form onSubmit={handleSubmit} className="create-package-form">
+        <div className="create-package-container">
+            <h2 className="form-title"><FileText size={20} /> Create Package</h2>
+            <form onSubmit={handleSubmit} className="form">
                 <div className="form-group">
                     <label htmlFor="images" className="form-label">
-                        Upload Images:
+                        <ImagePlus size={16} /> Upload Images:
                     </label>
                     <input
                         type="file"
@@ -106,7 +101,7 @@ export const CreatePackageForm = ({ onPackageCreated, getAuthHeaders }) => {
                 <ImagePreview selectedImages={selectedImages} />
 
                 <div className="form-group">
-                    <label htmlFor="title" className="form-label">Title:</label>
+                    <label htmlFor="title" className="form-label"><FileText size={16} /> Title:</label>
                     <input
                         type="text"
                         id="title"
@@ -119,7 +114,7 @@ export const CreatePackageForm = ({ onPackageCreated, getAuthHeaders }) => {
                 </div>
 
                 <div className="form-group">
-                    <label htmlFor="location" className="form-label">Location:</label>
+                    <label htmlFor="location" className="form-label"><MapPin size={16} /> Location:</label>
                     <input
                         type="text"
                         id="location"
@@ -132,7 +127,7 @@ export const CreatePackageForm = ({ onPackageCreated, getAuthHeaders }) => {
                 </div>
 
                 <div className="form-group">
-                    <label htmlFor="price" className="form-label">Price:</label>
+                    <label htmlFor="price" className="form-label"><DollarSign size={16} /> Price:</label>
                     <input
                         type="number"
                         id="price"
@@ -144,13 +139,9 @@ export const CreatePackageForm = ({ onPackageCreated, getAuthHeaders }) => {
                         step="any"
                         className="form-input"
                     />
-
                 </div>
 
-                <DurationSelector
-                    value={formData.duration}
-                    onChange={handleChange}
-                />
+                <DurationSelector value={formData.duration} onChange={handleChange} />
 
                 {highlights.map((highlight, index) => (
                     <div key={index} className="form-group">
@@ -167,7 +158,6 @@ export const CreatePackageForm = ({ onPackageCreated, getAuthHeaders }) => {
                         />
                     </div>
                 ))}
-
 
                 <div className="form-group">
                     <label htmlFor="description" className="form-label">Description:</label>
@@ -195,12 +185,12 @@ export const CreatePackageForm = ({ onPackageCreated, getAuthHeaders }) => {
                     />
                 </div>
 
-
-
                 <button type="submit" className="submit-button" disabled={loading}>
+                    {loading ? <Loader2 className="loading-icon" size={16} /> : <CheckCircle size={16} />}
                     {loading ? "Creating..." : "Create Package"}
                 </button>
             </form>
+
             {message && <p className="form-message">{message}</p>}
         </div>
     );

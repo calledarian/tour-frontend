@@ -1,10 +1,11 @@
 import { useEffect, useState } from 'react';
-import axios from 'axios';
-import '../styles/adminBooking.css';
+import { Calendar, Users, Phone, Mail, Clock, DollarSign, Check, X, Trash2, RefreshCw } from 'lucide-react';
+import styles from '../styles/adminBooking.js';
 
 const AdminBookings = () => {
     const [bookings, setBookings] = useState([]);
     const [loading, setLoading] = useState(false);
+    const [statusFilter, setStatusFilter] = useState('all');
 
     const apiUrl = process.env.REACT_APP_API_URL;
 
@@ -20,8 +21,13 @@ const AdminBookings = () => {
     const fetchBookings = async () => {
         setLoading(true);
         try {
-            const res = await axios.get(`${apiUrl}/bookings`, getAuthHeaders());
-            setBookings(res.data);
+            const res = await fetch(`${apiUrl}/bookings`, {
+                headers: getAuthHeaders().headers
+            });
+            const data = await res.json();
+            setBookings(data);
+        } catch (error) {
+            console.error('Failed to fetch bookings:', error);
         } finally {
             setLoading(false);
         }
@@ -29,14 +35,21 @@ const AdminBookings = () => {
 
     useEffect(() => {
         fetchBookings();
-        // eslint-disable-next-line react-hooks/exhaustive-deps
+                // eslint-disable-next-line react-hooks/exhaustive-deps
     }, []);
 
     const updateStatus = async (id, status) => {
         try {
-            await axios.patch(`${apiUrl}/bookings/${id}`, { status }, getAuthHeaders());
+            await fetch(`${apiUrl}/bookings/${id}`, {
+                method: 'PATCH',
+                headers: {
+                    'Content-Type': 'application/json',
+                    ...getAuthHeaders().headers
+                },
+                body: JSON.stringify({ status })
+            });
             fetchBookings();
-        } catch {
+        } catch (error) {
             alert('Failed to update status');
         }
     };
@@ -44,84 +57,216 @@ const AdminBookings = () => {
     const deleteBooking = async (id) => {
         if (!window.confirm('Are you sure you want to delete this booking?')) return;
         try {
-            await axios.delete(`${apiUrl}/bookings/${id}`, getAuthHeaders());
+            await fetch(`${apiUrl}/bookings/${id}`, {
+                method: 'DELETE',
+                headers: getAuthHeaders().headers
+            });
             fetchBookings();
-        } catch {
+        } catch (error) {
             alert('Failed to delete booking');
         }
     };
 
-    if (loading) return <p className="loading">Loading bookings...</p>;
+    const getStatusColor = (status) => {
+        switch (status) {
+            case 'confirmed': return { backgroundColor: '#dcfce7', color: '#15803d', border: '1px solid #bbf7d0' };
+            case 'pending': return { backgroundColor: '#fef3c7', color: '#92400e', border: '1px solid #fde68a' };
+            case 'cancelled': return { backgroundColor: '#fee2e2', color: '#dc2626', border: '1px solid #fecaca' };
+            default: return { backgroundColor: '#f3f4f6', color: '#374151', border: '1px solid #d1d5db' };
+        }
+    };
+
+    const filteredBookings = bookings.filter(booking => {
+        const matchesStatus = statusFilter === 'all' || booking.status === statusFilter;
+        return matchesStatus;
+    });
+
+    const getBookingStats = () => {
+        const total = bookings.length;
+        const confirmed = bookings.filter(b => b.status === 'confirmed').length;
+        const pending = bookings.filter(b => b.status === 'pending').length;
+        const cancelled = bookings.filter(b => b.status === 'cancelled').length;
+        return { total, confirmed, pending, cancelled };
+    };
+
+    const stats = getBookingStats();
+
+    if (loading) {
+        return (
+            <div style={styles.container}>
+                <div style={styles.loading}>
+                    <RefreshCw size={24} style={{ animation: 'spin 1s linear infinite', marginBottom: '8px' }} />
+                    <p>Loading bookings...</p>
+                </div>
+            </div>
+        );
+    }
 
     return (
-        <div className="admin-container">
-            <h1 className="admin-heading">Bookings Admin</h1>
-            <div className="table-wrapper">
+        <div style={styles.container}>
+            <div style={styles.header}>
+                <h1 style={styles.title}>Bookings Management</h1>
+                <p style={styles.subtitle}>Manage and track all tour bookings</p>
 
-                {bookings.length === 0 ? (
-                    <p className="empty-message">No bookings found.</p>
-                ) : (
-                    <table className="admin-table">
-                        <thead>
-                            <tr>
-                                <th>ID</th>
-                                <th>Tour ID</th>
-                                <th>Name</th>
-                                <th>Email</th>
-                                <th>People</th>
-                                <th>Phone</th>
-                                <th>Notes</th>
-                                <th>Total Price</th>
-                                <th>Status</th>
-                                <th>Created At</th>
-                                <th>Actions</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            {bookings.map((b) => (
-                                <tr key={b.id}>
-                                    <td>{b.id}</td>
-                                    <td>{b.tourId}</td>
-                                    <td>{b.name}</td>
-                                    <td>{b.email}</td>
-                                    <td>{b.people}</td>
-                                    <td>{b.phone}</td>
-                                    <td>{b.notes || '-'}</td>
-                                    <td>${Number(b.totalPrice).toFixed(2)}</td>
-                                    <td>{b.status}</td>
-                                    <td>{new Date(b.createdAt).toLocaleString()}</td>
-                                    <td>
-                                        <div className="button-group">
-                                            {b.status !== 'confirmed' && (
-                                                <button
-                                                    className="btn btn-confirm"
-                                                    onClick={() => updateStatus(b.id, 'confirmed')}
-                                                >
-                                                    Confirm
-                                                </button>
-                                            )}
-                                            {b.status !== 'cancelled' && (
-                                                <button
-                                                    className="btn btn-cancel"
-                                                    onClick={() => updateStatus(b.id, 'cancelled')}
-                                                >
-                                                    Cancel
-                                                </button>
-                                            )}
-                                            <button
-                                                className="btn btn-delete"
-                                                onClick={() => deleteBooking(b.id)}
-                                            >
-                                                Delete
-                                            </button>
-                                        </div>
-                                    </td>
-                                </tr>
-                            ))}
-                        </tbody>
-                    </table>
-                )}
+                <div style={styles.controls}>
+                    <select
+                        value={statusFilter}
+                        onChange={(e) => setStatusFilter(e.target.value)}
+                        style={styles.filterSelect}
+                    >
+                        <option value="all">All Status</option>
+                        <option value="pending">Pending</option>
+                        <option value="confirmed">Confirmed</option>
+                        <option value="cancelled">Cancelled</option>
+                    </select>
+
+                    <button
+                        onClick={fetchBookings}
+                        style={styles.refreshButton}
+                        onMouseOver={(e) => e.target.style.backgroundColor = '#2563eb'}
+                        onMouseOut={(e) => e.target.style.backgroundColor = '#3b82f6'}
+                    >
+                        <RefreshCw size={16} />
+                        Refresh
+                    </button>
+                </div>
+
+                <div style={styles.statsRow}>
+                    <div style={styles.statCard}>
+                        <div style={styles.statValue}>{stats.total}</div>
+                        <div style={styles.statLabel}>Total Bookings</div>
+                    </div>
+                    <div style={styles.statCard}>
+                        <div style={{ ...styles.statValue, color: '#059669' }}>{stats.confirmed}</div>
+                        <div style={styles.statLabel}>Confirmed</div>
+                    </div>
+                    <div style={styles.statCard}>
+                        <div style={{ ...styles.statValue, color: '#d97706' }}>{stats.pending}</div>
+                        <div style={styles.statLabel}>Pending</div>
+                    </div>
+                    <div style={styles.statCard}>
+                        <div style={{ ...styles.statValue, color: '#dc2626' }}>{stats.cancelled}</div>
+                        <div style={styles.statLabel}>Cancelled</div>
+                    </div>
+                </div>
             </div>
+
+            {filteredBookings.length === 0 ? (
+                <div style={styles.emptyState}>
+                    <Users size={64} style={styles.emptyIcon} />
+                    <h3 style={styles.emptyTitle}>No bookings found</h3>
+                    <p style={styles.emptyText}>
+                        {statusFilter !== 'all'
+                            ? 'No bookings found with the selected status'
+                            : 'No bookings have been made yet'
+                        }
+                    </p>
+                </div>
+            ) : (
+                <div style={styles.bookingsGrid}>
+                    {filteredBookings.map((booking) => (
+                        <div
+                            key={booking.id}
+                            style={styles.bookingCard}
+                            onMouseEnter={(e) => {
+                                Object.assign(e.currentTarget.style, styles.bookingCardHover);
+                            }}
+                            onMouseLeave={(e) => {
+                                e.currentTarget.style.boxShadow = '0 1px 3px rgba(0,0,0,0.1)';
+                                e.currentTarget.style.transform = 'none';
+                            }}
+                        >
+                            <div style={styles.cardHeader}>
+                                <div style={styles.customerInfo}>
+                                    <div style={styles.avatar}>
+                                        <Users size={20} color="#3b82f6" />
+                                    </div>
+                                    <div>
+                                        <div style={styles.customerName}>{booking.name}</div>
+                                        <div style={styles.bookingId}>
+                                            ID: {booking.id} | Tour: {booking.tourId}
+                                        </div>
+                                    </div>
+                                </div>
+                                <span style={{ ...styles.statusBadge, ...getStatusColor(booking.status) }}>
+                                    {booking.status}
+                                </span>
+                            </div>
+
+                            <div style={styles.detailsGrid}>
+                                <div style={styles.detailItem}>
+                                    <Mail style={styles.detailIcon} />
+                                    <span style={styles.detailText}>{booking.email}</span>
+                                </div>
+                                <div style={styles.detailItem}>
+                                    <Phone style={styles.detailIcon} />
+                                    <span style={styles.detailText}>{booking.phone}</span>
+                                </div>
+                                <div style={styles.detailItem}>
+                                    <Calendar style={styles.detailIcon} />
+                                    <span style={styles.detailText}>{booking.tourDate}</span>
+                                </div>
+                                <div style={styles.detailItem}>
+                                    <Users style={styles.detailIcon} />
+                                    <span style={styles.detailText}>{booking.people} people</span>
+                                </div>
+                            </div>
+
+                            {booking.notes && (
+                                <div style={{ marginBottom: '16px', padding: '12px', backgroundColor: '#f8fafc', borderRadius: '8px' }}>
+                                    <div style={{ fontSize: '12px', color: '#64748b', marginBottom: '4px' }}>Notes:</div>
+                                    <div style={{ fontSize: '14px', color: '#374151' }}>{booking.notes}</div>
+                                </div>
+                            )}
+
+                            <div style={styles.priceSection}>
+                                <div style={styles.price}>
+                                    <DollarSign size={18} style={{ display: 'inline', marginRight: '4px' }} />
+                                    {Number(booking.totalPrice).toFixed(2)}
+                                </div>
+                                <div style={styles.dateCreated}>
+                                    <Clock size={12} />
+                                    {new Date(booking.createdAt).toLocaleDateString()}
+                                </div>
+                            </div>
+
+                            <div style={styles.actions}>
+                                {booking.status !== 'confirmed' && (
+                                    <button
+                                        style={{ ...styles.actionButton, ...styles.confirmButton }}
+                                        onClick={() => updateStatus(booking.id, 'confirmed')}
+                                        onMouseOver={(e) => e.target.style.backgroundColor = '#047857'}
+                                        onMouseOut={(e) => e.target.style.backgroundColor = '#059669'}
+                                    >
+                                        <Check size={14} />
+                                        Confirm
+                                    </button>
+                                )}
+                                {booking.status !== 'cancelled' && (
+                                    <button
+                                        style={{ ...styles.actionButton, ...styles.cancelButton }}
+                                        onClick={() => updateStatus(booking.id, 'cancelled')}
+                                        onMouseOver={(e) => e.target.style.backgroundColor = '#b91c1c'}
+                                        onMouseOut={(e) => e.target.style.backgroundColor = '#dc2626'}
+                                    >
+                                        <X size={14} />
+                                        Cancel
+                                    </button>
+                                )}
+                                <button
+                                    style={{ ...styles.actionButton, ...styles.deleteButton }}
+                                    onClick={() => deleteBooking(booking.id)}
+                                    onMouseOver={(e) => e.target.style.backgroundColor = '#4b5563'}
+                                    onMouseOut={(e) => e.target.style.backgroundColor = '#6b7280'}
+                                >
+                                    <Trash2 size={14} />
+                                    Delete
+                                </button>
+                            </div>
+                        </div>
+                    ))}
+                </div>
+            )}
         </div>
     );
 };

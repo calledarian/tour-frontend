@@ -7,10 +7,12 @@ import Footer from './layout/Footer';
 import Home from './user/Home';
 import Dashboard from './components/dashboard';
 import Tours from './user/Tours';
+import ScrollToTop from './utils/scrollToTop';
 
 function App() {
   return (
     <Router>
+      <ScrollToTop />
       <NavBar />
       <Routes>
         <Route path='/' element={<Home />} />

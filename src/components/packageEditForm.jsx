@@ -1,4 +1,6 @@
 import { useState } from "react";
+import { Save, XCircle } from "lucide-react";
+import "../styles/packageEditForm.css";
 
 export const PackageEditForm = ({ pkg, onSave, onCancel }) => {
     const [editFormData, setEditFormData] = useState({
@@ -54,18 +56,14 @@ export const PackageEditForm = ({ pkg, onSave, onCancel }) => {
                 placeholder="Description"
             />
 
-            <button
-                style={{ marginLeft: "10px", backgroundColor: "green", color: "white" }}
-                onClick={handleSave}
-            >
-                Save
-            </button>
-            <button
-                style={{ marginLeft: "10px", backgroundColor: "red", color: "white" }}
-                onClick={onCancel}
-            >
-                Cancel
-            </button>
+            <div className="edit-form-actions">
+                <button className="btn btn-save" onClick={handleSave}>
+                    <Save size={16} /> Save
+                </button>
+                <button className="btn btn-cancel" onClick={onCancel}>
+                    <XCircle size={16} /> Cancel
+                </button>
+            </div>
         </div>
     );
 };

@@ -207,12 +207,6 @@ export default function PackageDetails() {
                     </section>
                 )}
             </div>
-
-            <div className="package-actions">
-                <button className="contact-btn">
-                    Contact Us
-                </button>
-            </div>
             <BookingForm />
         </div>
     );

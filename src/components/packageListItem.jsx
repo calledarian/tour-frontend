@@ -1,47 +1,32 @@
 import { Link } from "react-router-dom";
 import { PackageEditForm } from "./packageEditForm";
+import { Pencil, Trash2 } from "lucide-react";
+import "../styles/packageListItem.css";
 
 export const PackageListItem = ({ pkg, editId, onEdit, onDelete, onSaveEdit, onCancelEdit }) => {
     return (
-        <li className="tour-packages-item">
-            <Link
-                to={`/tours/${(pkg.id)}`}
-                className="tour-packages-content-link"
-                style={{ textDecoration: "none", color: "inherit" }}
-            >
-                <div className="tour-packages-image">
-                    {pkg.images && pkg.images.length > 0 && (
+        <li className="package-item">
+            <Link to={`/tours/${pkg.id}`} className="package-link">
+                <div className="package-image">
+                    {pkg.images?.length > 0 && (
                         <img
                             src={pkg.images[0]}
                             alt={pkg.title}
-                            style={{
-                                width: "100%",
-                                height: "100%",
-                                objectFit: "cover",
-                                borderRadius: "5px",
-                            }}
+                            className="package-img"
                         />
                     )}
                 </div>
-                <div className="tour-packages-content">
-                    <p className="tour-packages-item-id" style={{ fontSize: "0.85em", color: "#888" }}>
-                        Tour Id: {pkg.id}
-                    </p>
-                    <h3 className="tour-packages-item-title">{pkg.title}</h3>
-                    <p className="tour-packages-item-text">Location: {pkg.location}</p>
-                    <p className="tour-packages-item-text">Price: ${pkg.price}</p>
-                    <p className="tour-packages-item-text">Duration: {pkg.duration}</p>
-                    <Link
-                        to={`/tours/${(pkg.id)}`}
-                        className="tour-packages-content-link"
-                        style={{ textDecoration: "none", color: "green", display: "block" }}
-                    >
-                        External Details
-                    </Link>
+                <div className="package-details">
+                    <p className="package-id">Tour Id: {pkg.id}</p>
+                    <h3 className="package-title">{pkg.title}</h3>
+                    <p className="package-text">Location: {pkg.location}</p>
+                    <p className="package-text">Price: ${pkg.price}</p>
+                    <p className="package-text">Duration: {pkg.duration} day(s)</p>
+                    <span className="external-link">External Details →</span>
                 </div>
             </Link>
 
-            <div className="tour-packages-actions">
+            <div className="package-actions">
                 {editId === pkg.id ? (
                     <PackageEditForm
                         pkg={pkg}
@@ -51,22 +36,22 @@ export const PackageListItem = ({ pkg, editId, onEdit, onDelete, onSaveEdit, onC
                 ) : (
                     <>
                         <button
-                            className="tour-packages-btn edit-btn"
+                            className="action-btn edit"
                             onClick={(e) => {
                                 e.stopPropagation();
                                 onEdit(pkg);
                             }}
                         >
-                            Edit
+                            <Pencil size={16} /> Edit
                         </button>
                         <button
-                            className="tour-packages-btn delete-btn"
+                            className="action-btn delete"
                             onClick={(e) => {
                                 e.stopPropagation();
                                 onDelete(pkg.id);
                             }}
                         >
-                            Delete
+                            <Trash2 size={16} /> Delete
                         </button>
                     </>
                 )}
