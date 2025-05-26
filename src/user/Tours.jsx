@@ -8,7 +8,6 @@ const apiUrl = process.env.REACT_APP_API_URL;
 export default function Tours() {
     const [packages, setPackages] = useState([]);
     const [loading, setLoading] = useState(true);
-    const [error, setError] = useState(null);
     const navigate = useNavigate();
 
     useEffect(() => {
@@ -18,7 +17,6 @@ export default function Tours() {
                 setPackages(response.data);
                 setLoading(false);
             } catch (err) {
-                setError("Failed to load packages. Please try again later.");
                 setLoading(false);
             }
         }
@@ -35,24 +33,6 @@ export default function Tours() {
                 <div style={styles.loadingContent}>
                     <div style={styles.spinner}></div>
                     <p style={styles.loadingText}>Loading amazing packages...</p>
-                </div>
-            </div>
-        );
-    }
-
-    if (error) {
-        return (
-            <div style={styles.errorContainer}>
-                <div style={styles.errorContent}>
-                    <div style={styles.errorIcon}>⚠️</div>
-                    <h2 style={styles.errorTitle}>Oops!</h2>
-                    <p style={styles.errorMessage}>{error}</p>
-                    <button
-                        onClick={() => window.location.reload()}
-                        style={styles.retryButton}
-                    >
-                        Try Again
-                    </button>
                 </div>
             </div>
         );

@@ -16,7 +16,6 @@ export default function NavBar() {
                     <Link to="/">RambodaTours</Link>
                 </div>
 
-                {/* Phone number placed here */}
                 <div className="nav-phone">
                     <a href="tel:+94712345678" className="nav-link">+94 712 345 678</a>
                 </div>

@@ -61,21 +61,6 @@ export default function BookingForm() {
 
     const handleSubmit = async (e) => {
         e.preventDefault();
-
-        // Simple validation
-        if (!formData.name.trim()) {
-            setError("Please enter your name");
-            return;
-        }
-        if (!formData.email.trim()) {
-            setError("Please enter your email");
-            return;
-        }
-        if (!formData.phone.trim()) {
-            setError("Please enter your phone number");
-            return;
-        }
-
         setSubmitting(true);
         setError("");
 
@@ -90,7 +75,7 @@ export default function BookingForm() {
 
             // Reset form
             setFormData({
-                tourId: Number(id) || 0,
+                tourId: Number(id),
                 name: "",
                 email: "",
                 people: 1,

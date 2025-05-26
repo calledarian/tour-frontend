@@ -47,16 +47,6 @@ export default function PackageDetails() {
             };
 
             setPkg(data);
-        } catch (err) {
-            if (err.code === 'ECONNABORTED') {
-                setError("Request timed out. Please try again.");
-            } else if (err.response?.status === 404) {
-                setError("Package not found.");
-            } else if (err.response?.status >= 500) {
-                setError("Server error. Please try again later.");
-            } else {
-                setError("Failed to load package details. Please check your connection.");
-            }
         } finally {
             setLoading(false);
         }
