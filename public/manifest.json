@@ -1,6 +1,7 @@
 {
-  "short_name": "React App",
-  "name": "Create React App Sample",
+  "short_name": "Ramboda Tours",
+  "name": "Ramboda Tours, Your Travel Companion",
+  "description": "A React application for managing and booking tours with Ramboda Tours.",
   "icons": [
     {
       "src": "favicon.ico",
