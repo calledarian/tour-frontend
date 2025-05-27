@@ -82,6 +82,11 @@ export default function BookingVerify() {
                     <p><strong>Phone:</strong> {booking.phone || 'N/A'}</p>
                     <p><strong>Tour Date:</strong> {booking.tourDate ? new Date(booking.tourDate).toLocaleDateString() : 'N/A'}</p>
                     <p><strong>Status:</strong> {booking.status || 'N/A'}</p>
+                    {booking.status === 'pending' && (
+                        <p className="info-message">
+                            We’ve received your booking. We will contact you shortly via phone (+94 712345678) or email (info@rambodatours.com).
+                        </p>
+                    )}
                     <p>
                         <strong>Total Price:</strong>{' '}
                         {booking.totalPrice && !isNaN(booking.totalPrice)

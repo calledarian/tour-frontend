@@ -301,6 +301,11 @@
   margin-top: 10px;
   text-align: center;
 }
+.info-message {
+    color: #555;
+    margin-top: 10px;
+    font-style: italic;
+}
 
 
 @media (max-width: 480px) {
