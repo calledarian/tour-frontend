@@ -116,7 +116,9 @@ export default function BookingForm() {
         return (
             <div className="success-box">
                 <h2>✅ Booking Sent!</h2>
-                <p>We received your booking request. We'll call you within 24 hours to confirm.</p>
+                <p>We received your booking request. We'll call you from <a href="tel:+94712345678">+94 712 345 678</a>
+                    or email you from <a href="mailto:info@rambodatours.com">info@rambodatours.com</a>
+                    within 24 hours to confirm.</p>
                 <Link to="/tours" className="back-link">
                     Back to Tours
                 </Link>
