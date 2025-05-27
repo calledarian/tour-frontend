@@ -35,7 +35,7 @@ const AdminBookings = () => {
 
     useEffect(() => {
         fetchBookings();
-                // eslint-disable-next-line react-hooks/exhaustive-deps
+        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, []);
 
     const updateStatus = async (id, status) => {
@@ -209,6 +209,10 @@ const AdminBookings = () => {
                                 <div style={styles.detailItem}>
                                     <Users style={styles.detailIcon} />
                                     <span style={styles.detailText}>{booking.people} people</span>
+                                </div>
+                                <div style={styles.detailItem}>
+                                    <Users style={styles.detailIcon} />
+                                    <span style={styles.detailText}>{booking.referenceCode}</span>
                                 </div>
                             </div>
 

@@ -1,6 +1,7 @@
 import { Link } from "react-router-dom";
 import "../styles/home.css";
 import { MapPin, DollarSign, Clock, Star, Users, Globe, Award } from "lucide-react";
+import BookingVerify from "./bookingVerify";
 
 export default function Home() {
     return (
@@ -92,6 +93,7 @@ export default function Home() {
                     </div>
                 </div>
             </section>
+            <BookingVerify />
         </div>
     );
 }

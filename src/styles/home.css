@@ -258,6 +258,50 @@
     font-size: 2.5rem;
   }
 }
+/* bookingVerify.css */
+.booking-verification-section {
+  max-width: 500px;
+  margin: 40px auto;
+  padding: 20px;
+  border: 1px solid #ccc;
+  border-radius: 12px;
+  background-color: #f9f9f9;
+  font-family: sans-serif;
+}
+
+.booking-verification-section h2 {
+  text-align: center;
+}
+
+.booking-verification-section input {
+  width: 100%;
+  padding: 10px;
+  margin: 10px 0;
+}
+
+.booking-verification-section button {
+  width: 100%;
+  padding: 10px;
+  background-color: #0077cc;
+  color: white;
+  border: none;
+  cursor: pointer;
+}
+
+.booking-details {
+  margin-top: 20px;
+  background-color: #fff;
+  padding: 15px;
+  border-radius: 8px;
+  border: 1px solid #eee;
+}
+
+.error-message {
+  color: red;
+  margin-top: 10px;
+  text-align: center;
+}
+
 
 @media (max-width: 480px) {
   .hero-section {
