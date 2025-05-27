@@ -19,6 +19,7 @@ export default function Tours() {
                 setLoading(false);
             } catch (err) {
                 setLoading(false);
+                console.error("Error fetching packages:", err);
             }
         }
         fetchPackages();
