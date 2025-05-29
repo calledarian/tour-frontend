@@ -5,12 +5,12 @@ import axios from "axios";
 
 const apiUrl = process.env.REACT_APP_API_URL;
 
-export default function BookingForm() {
+export default function BookingForm({ packageData }) {
     const { id } = useParams();
 
-    const [price, setPrice] = useState(0);
-    const [loading, setLoading] = useState(true);
+    const [price, setPrice] = useState(packageData?.price || 0);
     const [error, setError] = useState("");
+    const [loading, setLoading] = useState(false);
     const [success, setSuccess] = useState(false);
     const [submitting, setSubmitting] = useState(false);
 
@@ -25,20 +25,17 @@ export default function BookingForm() {
         extra_field: "",
     });
 
-    // Get tour price
+    // Use packageData prop instead of fetching
     useEffect(() => {
-        if (!id) return;
-
-        axios.get(`${apiUrl}/packages/${id}`)
-            .then(res => {
-                setPrice(res.data.price || 0);
-                setLoading(false);
-            })
-            .catch(() => {
-                setError("Could not load tour info. Please refresh the page.");
-                setLoading(false);
-            });
-    }, [id]);
+        if (packageData && packageData.price) {
+            setPrice(packageData.price);
+            setLoading(false);
+        } else if (packageData && !packageData.price) {
+            setPrice(0);
+            setLoading(false);
+        }
+        // If no packageData, keep loading state (parent is still fetching)
+    }, [packageData]);
 
     // Calculate total price
     const getTotalPrice = () => {
@@ -98,8 +95,7 @@ export default function BookingForm() {
         }
     };
 
-
-    if (loading) {
+    if (loading && !packageData) {
         return <div className="loading">Loading...</div>;
     }
 
@@ -114,13 +110,43 @@ export default function BookingForm() {
 
     if (success) {
         return (
-            <div className="success-box">
-                <h2>✅ Booking Sent!</h2>
-                <p>We received your booking request. We'll call you from <a href="tel:+94712345678">+94 712 345 678</a>
-                    or email you from <a href="mailto:info@rambodatours.com">info@rambodatours.com</a>
-                    within 24 hours to confirm.</p>
-                <Link to="/tours" className="back-link">
-                    Back to Tours
+            <div className="success-box" style={{ textAlign: "center", padding: "2rem 1rem" }}>
+                <h2 style={{ color: "#2ecc40", fontSize: "2.2rem", marginBottom: "0.5rem" }}>✅ Booking Sent!</h2>
+                <h3 style={{ margin: "0.5rem 0 1.5rem", color: "#222" }}>We received your booking request.</h3>
+                <div style={{
+                    background: "#f4f8fb",
+                    borderRadius: "10px",
+                    display: "inline-block",
+                    padding: "1.2rem 2rem",
+                    marginBottom: "1.5rem",
+                    boxShadow: "0 2px 8px #e0e0e0"
+                }}>
+                    <p style={{ margin: "0.5rem 0" }}>
+                        We'll call you from <a href="tel:+94712345678" style={{ color: "#0074d9", fontWeight: 500 }}>+94 712 345 678</a>
+                        <br />
+                        or email you from <a href="mailto:info@rambodatours.com" style={{ color: "#0074d9", fontWeight: 500 }}>info@rambodatours.com</a>
+                    </p>
+                    <p style={{ margin: "0.5rem 0" }}>
+                        within <strong>24 hours</strong> to confirm your booking.
+                    </p>
+                    <p style={{ margin: "0.5rem 0" }}>
+                        We'll provide your reference code and verify your email address.<br />
+                        Please check your inbox and follow the instructions.
+                    </p>
+                </div>
+                <Link to="/" className="back-link" style={{
+                    display: "inline-block",
+                    marginTop: "1rem",
+                    padding: "0.7rem 2.2rem",
+                    background: "#0074d9",
+                    color: "#fff",
+                    borderRadius: "6px",
+                    textDecoration: "none",
+                    fontWeight: 600,
+                    fontSize: "1.1rem",
+                    boxShadow: "0 1px 4px #b0c4de"
+                }}>
+                    ⬅ Back to Home
                 </Link>
             </div>
         );
@@ -222,9 +248,6 @@ export default function BookingForm() {
                     />
 
                 </div>
-
-
-
 
                 {error && <div className="error-message">{error}</div>}
 

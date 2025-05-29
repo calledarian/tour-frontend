@@ -8,25 +8,31 @@ import Home from './user/Home';
 import Dashboard from './components/dashboard';
 import Tours from './user/Tours';
 import ScrollToTop from './utils/scrollToTop';
+import { PackagesProvider } from './utils/packageContext';
+import { PackageDetailsProvider } from './utils/packageDetailsContext';
 
 function App() {
   return (
-    <Router>
-      <ScrollToTop />
-      <NavBar />
-      <Routes>
-        <Route path='/' element={<Home />} />
-        <Route path='/tours' element={<Tours />} />
-        <Route path="/tours/:id" element={<PackageDetails />} />
-        <Route path='/login' element={<Login />} />
-        <Route path="/dashboard" element={
-          <PrivateRoute>
-            <Dashboard />
-          </PrivateRoute>
-        } />
-      </Routes>
-      <Footer />
-    </Router>
+    <PackagesProvider>
+      <PackageDetailsProvider>
+        <Router>
+          <ScrollToTop />
+          <NavBar />
+          <Routes>
+            <Route path='/' element={<Home />} />
+            <Route path='/tours' element={<Tours />} />
+            <Route path="/tours/:id" element={<PackageDetails />} />
+            <Route path='/login' element={<Login />} />
+            <Route path="/dashboard" element={
+              <PrivateRoute>
+                <Dashboard />
+              </PrivateRoute>
+            } />
+          </Routes>
+          <Footer />
+        </Router>
+      </PackageDetailsProvider>
+    </PackagesProvider>
   );
 }
 

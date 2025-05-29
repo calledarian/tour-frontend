@@ -167,4 +167,20 @@
     font-size: 1rem;
     padding-left: 0.5rem;
   }
+
+@media (max-width: 404px) {
+  .nav-phone .nav-link {
+
+    font-size: 0; /* Hide the number */
+    position: relative;
+  }
+
+  .nav-phone .nav-link::after {
+    content: "Call Us";
+    font-size: 24px;  
+    color: inherit;
+    font-weight: bold;
+  }
+}
+
 }

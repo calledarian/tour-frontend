@@ -1,15 +1,14 @@
 import { useEffect, useState, useCallback } from "react";
-import axios from "axios";
 import { useParams, useNavigate } from "react-router-dom";
 import '../styles/packageDetails.css';
 import { MapPin } from "lucide-react";
 import BookingForm from "./bookingForm";
-
-const apiUrl = process.env.REACT_APP_API_URL;
+import { usePackageDetails } from "../utils/packageDetailsContext";
 
 export default function PackageDetails() {
     const { id } = useParams();
     const navigate = useNavigate();
+    const { fetchPackageById } = usePackageDetails(); // Use the context
     const [pkg, setPkg] = useState(null);
     const [error, setError] = useState("");
     const [loading, setLoading] = useState(true);
@@ -37,20 +36,22 @@ export default function PackageDetails() {
 
         try {
             setError("");
-            const res = await axios.get(`${apiUrl}/packages/${id}`, {
-                timeout: 10000, // 10 second timeout
-            });
+            // Use the context function instead of axios directly
+            const data = await fetchPackageById(id);
 
-            const data = {
-                ...res.data,
-                highlights: parseHighlights(res.data.highlights)
+            const processedData = {
+                ...data,
+                highlights: parseHighlights(data.highlights)
             };
 
-            setPkg(data);
+            setPkg(processedData);
+        } catch (err) {
+            // Handle errors that might come from the context
+            setError(err.response?.data?.message || err.message || "Failed to load package details");
         } finally {
             setLoading(false);
         }
-    }, [id, parseHighlights]);
+    }, [id, parseHighlights, fetchPackageById]);
 
     useEffect(() => {
         fetchPackage();
@@ -207,7 +208,7 @@ export default function PackageDetails() {
                     </section>
                 )}
             </div>
-            <BookingForm />
+            <BookingForm packageData={pkg} />
         </div>
     );
 }

@@ -1,29 +1,11 @@
-import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import axios from "axios";
 import { MapPin } from "lucide-react";
 import styles from "../styles/Tours";
-
-const apiUrl = process.env.REACT_APP_API_URL;
+import { usePackages } from "../utils/packageContext";
 
 export default function Tours() {
-    const [packages, setPackages] = useState([]);
-    const [loading, setLoading] = useState(true);
+    const { packages, loading } = usePackages();
     const navigate = useNavigate();
-
-    useEffect(() => {
-        async function fetchPackages() {
-            try {
-                const response = await axios.get(`${apiUrl}/packages`);
-                setPackages(response.data);
-                setLoading(false);
-            } catch (err) {
-                setLoading(false);
-                console.error("Error fetching packages:", err);
-            }
-        }
-        fetchPackages();
-    }, []);
 
     const handlePackageClick = (packageId) => {
         navigate(`/tours/${packageId}`);
@@ -57,7 +39,7 @@ export default function Tours() {
                 <div style={styles.packagesContainer}>
                     {packages.length === 0 ? (
                         <div style={styles.emptyState}>
-                            <div style={styles.emptyIcon}>🏝️</div>
+                            <div style={styles.emptyIcon}></div>
                             <h3 style={styles.emptyTitle}>No packages available</h3>
                             <p style={styles.emptyMessage}>
                                 Check back soon for exciting new travel packages!
@@ -83,9 +65,7 @@ export default function Tours() {
                                                 <span style={styles.placeholderIcon}>🏞️</span>
                                             </div>
                                         )}
-                                        <div style={styles.durationBadge}>
-                                            {pkg.duration}
-                                        </div>
+                                        <div style={styles.durationBadge}>{pkg.duration}</div>
                                     </div>
 
                                     <div style={styles.packageContent}>
@@ -98,9 +78,7 @@ export default function Tours() {
                                                 <span style={styles.priceLabel}>From</span>
                                                 <span style={styles.price}>${pkg.price}</span>
                                             </div>
-                                            <button style={styles.viewButton}>
-                                                View Details →
-                                            </button>
+                                            <button style={styles.viewButton}>View Details →</button>
                                         </div>
                                     </div>
                                 </div>

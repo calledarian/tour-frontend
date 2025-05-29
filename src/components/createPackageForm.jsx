@@ -92,7 +92,8 @@ export const CreatePackageForm = ({ onPackageCreated, getAuthHeaders }) => {
                         id="images"
                         name="images"
                         multiple
-                        accept="image/png, image/jpeg"
+                        accept="image/png, image/jpeg, image/jpg, image/webp, image/heic, image/heif"
+                        max={7}
                         onChange={handleImageChange}
                         className="form-input"
                     />

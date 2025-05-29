@@ -16,7 +16,7 @@ export default function Footer() {
                 <div className="footer-section">
                     <h4 className="footer-heading">Contact Us</h4>
                     <address className="footer-contact">
-                        <p>Phone: <a href="tel:(123) 456-7890">(123) 456-7890</a></p>
+                        <p>Phone: <a href="tel:+94 712 345 678">+94 712 345 678</a></p>
                         <p>Email: <a href="mailto:info@rambodatours.com">info@rambodatours.com</a></p>
                     </address>
                 </div>

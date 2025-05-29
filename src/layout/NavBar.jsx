@@ -20,6 +20,7 @@ export default function NavBar() {
                     <a href="tel:+94712345678" className="nav-link">+94 712 345 678</a>
                 </div>
 
+
                 <div className="menu-toggle" onClick={toggleMenu}>
                     <div className={`hamburger ${isMenuOpen ? 'active' : ''}`}>
                         <span></span>
