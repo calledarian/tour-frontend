@@ -26,11 +26,8 @@ const Login = () => {
             const response = await axios.post(`${apiUrl}/auth/login`, {
                 username,
                 password,
-                extra_field: extraField,
-            }, {
-                withCredentials: true,
+                extra_field: extraField, // send honeypot value for backend check
             });
-
 
             const token = response.data.access_token;
             if (token) {
