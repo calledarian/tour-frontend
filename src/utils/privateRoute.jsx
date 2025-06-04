@@ -8,19 +8,25 @@ const PrivateRoute = ({ children }) => {
     const [isAuth, setIsAuth] = useState(null); // null = loading
 
     useEffect(() => {
-        fetch(`${apiUrl}/auth/me`, {
-            method: 'GET',
-            credentials: 'include', // send cookies
-        })
-            .then(res => {
-                if (res.ok) {
-                    setIsAuth(true);
-                } else {
-                    setIsAuth(false);
-                }
-            })
-            .catch(() => setIsAuth(false));
-    }, []);
+  console.log("Checking auth...");
+  fetch(`${apiUrl}/auth/me`, {
+    method: 'GET',
+    credentials: 'include',
+  })
+    .then(res => {
+      console.log("Auth check response:", res.status);
+      if (res.ok) {
+        setIsAuth(true);
+      } else {
+        setIsAuth(false);
+      }
+    })
+    .catch(err => {
+      console.error("Auth check failed:", err);
+      setIsAuth(false);
+    });
+}, []);
+
 
     if (isAuth === null) {
         return <div>Loading...</div>; // or spinner
