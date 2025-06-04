@@ -17,23 +17,24 @@ const Login = () => {
         setError('');
 
         if (extraField) {
-            // Honeypot field filled => possible bot
             setError('Bot detected.');
             return;
         }
 
         try {
-            const response = await axios.post(`${apiUrl}/auth/login`, {
-                username,
-                password,
-                extra_field: extraField, // send honeypot value for backend check
-            });
+            const response = await axios.post(
+                `${apiUrl}/auth/login`,
+                {
+                    username,
+                    password,
+                    extra_field: extraField,
+                },
+                {
+                    withCredentials: true, // 🔥 allow cookies to be sent/stored
+                }
+            );
+            window.location.href = '/dashboard';
 
-            const token = response.data.access_token;
-            if (token) {
-                localStorage.setItem('token', token);
-                window.location.href = '/dashboard';
-            }
         } catch (err) {
             if (err.response?.data?.message) {
                 setError(err.response.data.message);
@@ -42,6 +43,7 @@ const Login = () => {
             }
         }
     };
+
 
     return (
         <div className="login-container">

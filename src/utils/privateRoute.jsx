@@ -1,22 +1,32 @@
+import { useEffect, useState } from 'react';
 import { Navigate } from 'react-router-dom';
 
-function isTokenValid(token) {
-    if (!token) return false;
-    try {
-        const payload = JSON.parse(atob(token.split('.')[1]));
-        if (payload.exp && Date.now() >= payload.exp * 1000) {
-            return false;
-        }
-        return true;
-    } catch (e) {
-        return false;
-    }
-}
+const apiUrl = process.env.REACT_APP_API_URL;
+
 
 const PrivateRoute = ({ children }) => {
-    const token = localStorage.getItem('token');
+    const [isAuth, setIsAuth] = useState(null); // null = loading
 
-    if (!isTokenValid(token)) {
+    useEffect(() => {
+        fetch(`${apiUrl}/auth/me`, {
+            method: 'GET',
+            credentials: 'include', // send cookies
+        })
+            .then(res => {
+                if (res.ok) {
+                    setIsAuth(true);
+                } else {
+                    setIsAuth(false);
+                }
+            })
+            .catch(() => setIsAuth(false));
+    }, []);
+
+    if (isAuth === null) {
+        return <div>Loading...</div>; // or spinner
+    }
+
+    if (!isAuth) {
         return <Navigate to="/login" replace />;
     }
 

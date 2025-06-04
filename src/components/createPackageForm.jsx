@@ -7,7 +7,7 @@ import '../styles/createPackageForm.css'
 
 const apiUrl = process.env.REACT_APP_API_URL;
 
-export const CreatePackageForm = ({ onPackageCreated, getAuthHeaders }) => {
+export const CreatePackageForm = ({ onPackageCreated }) => {
     const [formData, setFormData] = useState({
         title: "",
         location: "",
@@ -52,13 +52,17 @@ export const CreatePackageForm = ({ onPackageCreated, getAuthHeaders }) => {
                 formPayload.append("images", selectedImages[i]);
             }
 
-            const response = await axios.post(`${apiUrl}/packages/create`, formPayload, {
-                ...getAuthHeaders(),
-                headers: {
-                    "Content-Type": "multipart/form-data",
-                    ...getAuthHeaders().headers,
-                },
-            });
+            const response = await axios.post(
+                `${apiUrl}/packages/create`,
+                formPayload,
+                {
+                    headers: {
+                        "Content-Type": "multipart/form-data",
+                    },
+                    withCredentials: true,
+                }
+            );
+
 
             setMessage("Package created successfully!");
             setLoading(false);

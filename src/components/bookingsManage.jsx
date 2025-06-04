@@ -9,20 +9,11 @@ const AdminBookings = () => {
 
     const apiUrl = process.env.REACT_APP_API_URL;
 
-    const getAuthHeaders = () => {
-        const token = localStorage.getItem('token');
-        return {
-            headers: {
-                Authorization: `Bearer ${token}`,
-            },
-        };
-    };
-
     const fetchBookings = async () => {
         setLoading(true);
         try {
             const res = await fetch(`${apiUrl}/bookings`, {
-                headers: getAuthHeaders().headers
+                credentials: 'include',
             });
             const data = await res.json();
             setBookings(data);
@@ -42,10 +33,8 @@ const AdminBookings = () => {
         try {
             await fetch(`${apiUrl}/bookings/${id}`, {
                 method: 'PATCH',
-                headers: {
-                    'Content-Type': 'application/json',
-                    ...getAuthHeaders().headers
-                },
+                headers: { 'Content-Type': 'application/json' },
+                credentials: 'include',
                 body: JSON.stringify({ status })
             });
             fetchBookings();
@@ -59,7 +48,7 @@ const AdminBookings = () => {
         try {
             await fetch(`${apiUrl}/bookings/${id}`, {
                 method: 'DELETE',
-                headers: getAuthHeaders().headers
+                credentials: 'include',
             });
             fetchBookings();
         } catch (error) {

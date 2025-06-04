@@ -4,15 +4,27 @@ import '../styles/dashboard.css';
 import { CreatePackageForm } from "./createPackageForm";
 import { PackagesList } from "./packageList";
 import AdminBookings from "./bookingsManage";
+import axios from "axios";
+
+const apiUrl = process.env.REACT_APP_API_URL;
+
 
 export default function Dashboard() {
     const { packages, loading, error, deletePackage, updatePackage, addPackage, getAuthHeaders } = usePackages();
     const [editId, setEditId] = useState(null);
 
-    const handleLogout = () => {
-        localStorage.removeItem("token");
-        window.location.href = "/login";
+
+    const handleLogout = async () => {
+        try {
+            await axios.post(`${apiUrl}/auth/logout`, {}, { withCredentials: true });
+        } catch (error) {
+            console.error('Logout failed', error);
+        } finally {
+            window.location.href = "/login";
+        }
     };
+
+
 
     const handleEdit = (pkg) => {
         setEditId(pkg.id);
@@ -25,6 +37,7 @@ export default function Dashboard() {
     const handleSaveEdit = async (id, editFormData) => {
         try {
             await updatePackage(id, editFormData);
+            console.log("Saving edit with:", editFormData);
             setEditId(null);
         } catch (err) {
             // Error handling is done in the hook
