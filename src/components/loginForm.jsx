@@ -22,7 +22,7 @@ const Login = () => {
         }
 
         try {
-            const response = await axios.post(
+            await axios.post(
                 `${apiUrl}/auth/login`,
                 {
                     username,
@@ -30,7 +30,7 @@ const Login = () => {
                     extra_field: extraField,
                 },
                 {
-                    withCredentials: true, // 🔥 allow cookies to be sent/stored
+                    withCredentials: true,
                 }
             );
             window.location.href = '/dashboard';

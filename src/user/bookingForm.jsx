@@ -2,12 +2,14 @@ import { Link, useParams } from "react-router-dom";
 import { useState, useEffect } from "react";
 import "../styles/bookingForm.css";
 import axios from "axios";
+import ReCAPTCHA from 'react-google-recaptcha';
 
+const RECAPTCHA_SITE_KEY = process.env.REACT_APP_SITE_KEY;
 const apiUrl = process.env.REACT_APP_API_URL;
 
 export default function BookingForm({ packageData }) {
     const { id } = useParams();
-
+    const [captchaToken, setCaptchaToken] = useState(null);
     const [price, setPrice] = useState(packageData?.price || 0);
     const [error, setError] = useState("");
     const [loading, setLoading] = useState(false);
@@ -60,6 +62,12 @@ export default function BookingForm({ packageData }) {
 
     const handleSubmit = async (e) => {
         e.preventDefault();
+
+        if (!captchaToken) {
+            alert('Please verify that you are not a robot.');
+            return;
+        }
+
         setSubmitting(true);
         setError("");
 
@@ -72,12 +80,13 @@ export default function BookingForm({ packageData }) {
         try {
             const bookingData = {
                 ...formData,
-                totalPrice: getTotalPrice()
+                totalPrice: getTotalPrice(),
+                captchaToken, // <-- send token here!
             };
 
             await axios.post(`${apiUrl}/bookings`, bookingData);
-            setSuccess(true);
 
+            setSuccess(true);
             setFormData({
                 tourId: Number(id),
                 name: "",
@@ -88,12 +97,14 @@ export default function BookingForm({ packageData }) {
                 notes: "",
                 extra_field: "",
             });
+            setCaptchaToken(null); // reset captcha for new form
         } catch (err) {
             setError("Booking failed. Please try again or call us directly.");
         } finally {
             setSubmitting(false);
         }
     };
+
 
     if (loading && !packageData) {
         return <div className="loading">Loading...</div>;
@@ -257,6 +268,13 @@ export default function BookingForm({ packageData }) {
                         <small>({formData.people === 2 ? '10%' : '15%'} discount applied)</small>
                     )}
                 </div>
+
+                <ReCAPTCHA
+                    sitekey={RECAPTCHA_SITE_KEY}
+                    onChange={(token) => setCaptchaToken(token)}
+                    onExpired={() => setCaptchaToken(null)}
+                />
+
 
                 <button
                     type="submit"
