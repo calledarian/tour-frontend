@@ -269,12 +269,13 @@ export default function BookingForm({ packageData }) {
                     )}
                 </div>
 
-                <ReCAPTCHA
-                    sitekey={RECAPTCHA_SITE_KEY}
-                    onChange={(token) => setCaptchaToken(token)}
-                    onExpired={() => setCaptchaToken(null)}
-                />
-
+                <div style={{ display: "flex", justifyContent: "center", padding: "10px" }}>
+                    <ReCAPTCHA
+                        sitekey={RECAPTCHA_SITE_KEY}
+                        onChange={(token) => setCaptchaToken(token)}
+                        onExpired={() => setCaptchaToken(null)}
+                    />
+                </div>
 
                 <button
                     type="submit"
