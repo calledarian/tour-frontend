@@ -2,19 +2,28 @@ import { useState } from 'react';
 import axios from 'axios';
 import { LogIn, AlertCircle } from 'lucide-react';
 import '../styles/login.css';
+import { useNavigate } from 'react-router-dom';
+import { useCookiesEnabled } from '../utils/useCookiesEnabled';
 
 const apiUrl = process.env.REACT_APP_API_URL;
 
 const Login = () => {
+    const cookiesEnabled = useCookiesEnabled();
     const [username, setUsername] = useState('');
     const [password, setPassword] = useState('');
     const [extraField, setExtraField] = useState(''); // honeypot
     const [error, setError] = useState('');
     const [showContact, setShowContact] = useState(false);
+    const navigate = useNavigate();
 
     const handleLogin = async (e) => {
         e.preventDefault();
         setError('');
+
+        if (!useCookiesEnabled) {
+            setError("Cookies are disabled, please enable them to log in.")
+            return
+        }
 
         if (extraField) {
             setError('Bot detected.');
@@ -33,7 +42,7 @@ const Login = () => {
                     withCredentials: true,
                 }
             );
-            window.location.href = '/dashboard';
+            navigate('/dashboard')
 
         } catch (err) {
             if (err.response?.data?.message) {
@@ -80,7 +89,7 @@ const Login = () => {
                     autoComplete="off"
                 />
 
-                <button type="submit" className="login-button">
+                <button type="submit" className="login-button" disabled={!cookiesEnabled}>
                     <LogIn size={16} /> Login
                 </button>
             </form>
