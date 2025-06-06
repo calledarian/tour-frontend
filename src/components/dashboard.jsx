@@ -5,6 +5,7 @@ import { CreatePackageForm } from "./createPackageForm";
 import { PackagesList } from "./packageList";
 import AdminBookings from "./bookingsManage";
 import axios from "axios";
+import LoadingSpinner from "../utils/LoadingSpinner";
 
 const apiUrl = process.env.REACT_APP_API_URL;
 
@@ -44,7 +45,7 @@ export default function Dashboard() {
         }
     };
 
-    if (loading) return <p>Loading packages...</p>;
+    if (loading) return <LoadingSpinner />;
     if (error) return <p>{error}</p>;
 
     return (

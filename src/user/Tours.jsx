@@ -2,6 +2,7 @@ import { useNavigate } from "react-router-dom";
 import { MapPin } from "lucide-react";
 import styles from "../styles/Tours";
 import { usePackages } from "../utils/packageContext";
+import LoadingSpinner from "../utils/LoadingSpinner";
 
 export default function Tours() {
     const { packages, loading } = usePackages();
@@ -13,12 +14,7 @@ export default function Tours() {
 
     if (loading) {
         return (
-            <div style={styles.loadingContainer}>
-                <div style={styles.loadingContent}>
-                    <div style={styles.spinner}></div>
-                    <p style={styles.loadingText}>Loading amazing packages...</p>
-                </div>
-            </div>
+            <LoadingSpinner />
         );
     }
 

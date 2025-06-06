@@ -4,6 +4,7 @@ import '../styles/packageDetails.css';
 import { MapPin } from "lucide-react";
 import BookingForm from "./bookingForm";
 import { usePackageDetails } from "../utils/packageDetailsContext";
+import LoadingSpinner from "../utils/LoadingSpinner";
 
 export default function PackageDetails() {
     const { id } = useParams();
@@ -75,10 +76,7 @@ export default function PackageDetails() {
 
     if (loading) {
         return (
-            <div className="package-loading">
-                <div className="loading-spinner"></div>
-                <p>Loading package details...</p>
-            </div>
+            <LoadingSpinner />
         );
     }
 

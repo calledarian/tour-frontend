@@ -3,6 +3,7 @@ import { useState, useEffect } from "react";
 import "../styles/bookingForm.css";
 import axios from "axios";
 import ReCAPTCHA from 'react-google-recaptcha';
+import LoadingSpinner from "../utils/LoadingSpinner";
 
 const RECAPTCHA_SITE_KEY = process.env.REACT_APP_SITE_KEY;
 const apiUrl = process.env.REACT_APP_API_URL;
@@ -107,7 +108,7 @@ export default function BookingForm({ packageData }) {
 
 
     if (loading && !packageData) {
-        return <div className="loading">Loading...</div>;
+        return <LoadingSpinner />;
     }
 
     if (error && !success) {
@@ -269,7 +270,7 @@ export default function BookingForm({ packageData }) {
                     )}
                 </div>
 
-                <div style={{ display: "flex", justifyContent: "center", padding: "10px" }}>
+                <div style={{ display: "flex", justifyContent: "center", padding: "10px " }}>
                     <ReCAPTCHA
                         sitekey={RECAPTCHA_SITE_KEY}
                         onChange={(token) => setCaptchaToken(token)}
